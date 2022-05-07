@@ -5,12 +5,10 @@ require_once('./components/Todo.class.php');
 require_once('./components/User.class.php');
 
 $connection = new Connection("localhost", "root", "root", "todo-db", "8889");
-// Variable mysqli
-$mysqli = $connection->connect();
 //Query a ejecutar
 $query = "SELECT idTodo, title, completed, user, idUser, name, username, password, street, city, zipcode, country FROM todo INNER JOIN user ON user.idUser = todo.user";
 //Variable con los resultados
-$resUsers = $mysqli->query($query);
+$resUsers = $connection->query($query);
 //Array con resultados
 $todos = [];
 
@@ -19,7 +17,5 @@ while ($row = mysqli_fetch_assoc($resUsers)) {
     $todo = new Todo($row["idTodo"], $row["title"], $row["completed"], $user);
     $todos[] = $todo;
 }
-
-$connection->closeCon();
 
 echo (json_encode($todos));

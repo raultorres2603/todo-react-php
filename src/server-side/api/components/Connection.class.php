@@ -1,6 +1,7 @@
 <?php
 class Connection
 {
+    // In constructor, we will pass all parameters to make a new object.
     function __construct($hostname, $username, $password, $database, $port)
     {
         $this->hostname = $hostname;
@@ -8,7 +9,6 @@ class Connection
         $this->password = $password;
         $this->database = $database;
         $this->port = $port;
-        $this->mysqli = null;
     }
 
     /* GETTERS & SETTERS */
@@ -38,27 +38,28 @@ class Connection
         return $this->port;
     }
 
-    function getMYSQLI()
-    {
-        return $this->mysqli;
-    }
-
-    function setMYSQLI($mysqli)
-    {
-        $this->mysqli = $mysqli;
-    }
-
     /* FIN --> GETTERS & SETTERS */
-
-    function connect()
+    private function connect()
     {
-        $connect = new mysqli($this->getHost(), $this->getUserName(), $this->getPassword(), $this->getDatabase(), $this->getPort());
-        $this->setMYSQLI($connect);
-        return ($this->getMYSQLI());
+        if ($connect = new mysqli($this->getHost(), $this->getUserName(), $this->getPassword(), $this->getDatabase(), $this->getPort())) {
+            return ($connect);
+        } else {
+            return $connect->connect_errno;
+        }
     }
 
-    function closeCon()
+    // Function to call to make a query, automatically closes connection to db after query
+    function query($query)
     {
-        $this->getMYSQLI()->close();
+        if ($con = $this->connect()) {
+            if ($res = $con->query($query)) {
+                $con->close();
+                return $res;
+            } else {
+                return $con->errno;
+            }
+        } else {
+            return $con->connect_errno;
+        }
     }
 }
