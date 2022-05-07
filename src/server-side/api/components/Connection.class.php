@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * @author Raúl Torres Alarcón <raultorres2603@gmail.com>
+ */
 class Connection
 {
     // In constructor, we will pass all parameters to make a new object.
