@@ -5,11 +5,11 @@ require_once('./components/Connection.class.php');
 require_once('./components/Todo.class.php');
 require_once('./components/User.class.php');
 
+$request_body = file_get_contents('php://input');
+$data = json_decode($request_body, true);
+
+
 $connection = new Connection("localhost", "root", "root", "todo-db", "8889");
-$sql = "INSERT INTO todo (title,completed,user) VALUES ('" . $_POST["title"] . "', '" . $_POST["completed"] . "', '" . $_POST["userId"] . "')";
+$sql = "INSERT INTO todo (title,completed,user) VALUES ('" . $data["title"] . "', '" . $data["completed"] . "', '" . $data["userId"] . "')";
 $res = $connection->query($sql);
-if ($connection->insert_id) {
-    echo ("OK");
-} else {
-    echo ("Error");
-}
+echo ("OK");

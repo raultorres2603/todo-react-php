@@ -11,9 +11,10 @@ class listTodos extends React.Component {
       users: [],
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.updateView = this.updateView.bind(this);
   }
 
-  componentDidMount() {
+  updateView() {
     axios
       .get(`http://localhost:8888/api/get-todos.php`)
       .then((res) => {
@@ -41,6 +42,10 @@ class listTodos extends React.Component {
       });
   }
 
+  componentDidMount() {
+    this.updateView();
+  }
+
   handleSubmit(e) {
     e.preventDefault();
     let userId = document.getElementById("userInp").value;
@@ -61,19 +66,10 @@ class listTodos extends React.Component {
           completed: completed,
         })
         .then((res) => {
-          switch (res.data) {
-            case "OK":
-              this.forceUpdate(() => {
-                console.log("Updated correctly");
-              });
-              alert("TODO inserted correctly!");
-              break;
-            case "Error":
-              alert("Could not insert this TODO.");
-              break;
-
-            default:
-              break;
+          if (res.data !== "OK") {
+            alert("Could not insert this TODO.");
+          } else {
+            this.updateView();
           }
         })
         .catch((err) => {
