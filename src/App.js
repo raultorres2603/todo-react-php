@@ -8,7 +8,7 @@ import ListTodos from "./components/ListTodos";
 class App extends React.Component {
   render() {
     return (
-      <div className="AppDiv">
+      <div id="AppDiv" className="AppDiv">
         <ListTodos />
       </div>
     );

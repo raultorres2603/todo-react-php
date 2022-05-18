@@ -1,9 +1,12 @@
 import React from "react";
+import * as ReactDOM from "react-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import axios from "axios";
+import Cookies from "universal-cookie";
+import LoginForm from "./LoginForm";
 
-class listTodos extends React.Component {
+class ListTodos extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,6 +15,7 @@ class listTodos extends React.Component {
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updateView = this.updateView.bind(this);
+    this.handleDeleteTodo = this.handleDeleteTodo.bind(this);
   }
 
   updateView() {
@@ -43,7 +47,14 @@ class listTodos extends React.Component {
   }
 
   componentDidMount() {
-    this.updateView();
+    let cookie = new Cookies();
+    if (cookie.get("logTodo")) {
+      console.log("Estás logeado");
+      this.updateView();
+    } else {
+      console.log("No estás logeado");
+      ReactDOM.render(<LoginForm />, document.getElementById("AppDiv"));
+    }
   }
 
   handleSubmit(e) {
@@ -76,6 +87,20 @@ class listTodos extends React.Component {
           alert(err);
         });
     }
+  }
+
+  handleDeleteTodo(e) {
+    let todoId = e.target.value;
+    axios
+      .post("http://localhost:8888/api/delete-todos.php", {
+        todoId: todoId,
+      })
+      .then((res) => {
+        this.updateView();
+      })
+      .catch((err) => {
+        alert(err);
+      });
   }
 
   render() {
@@ -149,6 +174,7 @@ class listTodos extends React.Component {
                     <th>ID TODO</th>
                     <th>Title</th>
                     <th>Completed</th>
+                    <th>Delete</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -165,6 +191,16 @@ class listTodos extends React.Component {
                       <td>{todo.id}</td>
                       <td>{todo.title}</td>
                       <td>{todo.completed}</td>
+                      <td>
+                        <button
+                          type="button"
+                          value={todo.id}
+                          onClick={this.handleDeleteTodo}
+                          class="btn btn-danger"
+                        >
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -177,4 +213,4 @@ class listTodos extends React.Component {
   }
 }
 
-export default listTodos;
+export default ListTodos;
